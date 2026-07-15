@@ -16,20 +16,39 @@ jobs:
       - name: Install System Dependencies
         run: |
           sudo apt update
+          sudo apt-add-repository multiverse -y
+          sudo apt update
           sudo apt install game-data-packager-runtime game-data-packager wget gdebi-core -y
-          sudo apt install innoextract lgogdownloader
+          sudo apt install arj cabextract cdparanoia dynamite gdebi innoextract lame lgc-pg lgogdownloader lhasa pkexec python3-omg python3-pil steam-installer steamcmd unar unshield vorbis-tools xdelta xdelta3 xorriso gvfs libvisual-0.4-plugins opus-tools librsvg2-bin -y
+          sudo apt install etlegacy -y
 
-      - name: Patch game-data-packager Arch Linux Module (fixes error)
+      - name: Patch game-data-packager Arch Linux Module
         run: |
-          # Injects 'PackageRelation' into the relative import block of arch.py
-          sudo sed -i 's/from \. import (PackagingSystem/from . import (PackagingSystem, PackageRelation/' /usr/share/games/game-data-packager/game_data_packager/packaging/arch.py
+          sudo python3 -c '
+          file_path = "/usr/share/games/game-data-packager/game_data_packager/packaging/arch.py"
+          with open(file_path, "r") as f:
+              content = f.read()
+          
+          # Force inject PackageRelation into the file imports if it is missing
+          if "PackageRelation" not in content:
+              content = content.replace(
+                  "from . import (PackagingSystem,", 
+                  "from . import (PackagingSystem, PackageRelation,"
+              ).replace(
+                  "from . import (PackagingSystem\n",
+                  "from . import (PackagingSystem, PackageRelation\n"
+              )
+          
+          with open(file_path, "w") as f:
+              f.write(content)
+          '
+
       - name: Download Enemy Territory from Trackbase
         run: |
           curl -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)" \
                -L "http://filebase.trackbase.net/et/full/et260b.x86_full.zip" \
                -o et260b.x86_full.zip
 
-      # 4. Generate packages for Arch, Debian, and RPM
       - name: Run game-data-packager for multiple formats
         run: |
           mkdir -p output
