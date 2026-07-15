@@ -22,24 +22,29 @@ jobs:
           sudo apt install game-data-packager-runtime game-data-packager wget gdebi-core -y
           sudo apt install arj cabextract cdparanoia dynamite gdebi innoextract lame lgc-pg lgogdownloader lhasa pkexec python3-omg python3-pil unar unshield vorbis-tools xdelta xdelta3 xorriso gvfs libvisual-0.4-plugins opus-tools librsvg2-bin -y
 
-      - name: Download Enemy Territory from Trackbase
+      - name: Download UT99 Files
         run: |
           curl -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)" \
                -L "https://archive.org/download/Unreal-GOG-Collection/Unreal%20Tournament%20GOTY/setup_ut_goty_2.0.0.5.exe" \
                -o setup_ut_goty_2.0.0.5.exe
-
+          curl -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)" \
+               -L "https://www.oldunreal.com/patch/unrealtournament/official/ut-install-436.run" \
+               -o ut-install-436.run
+          curl -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)" \
+               -L "https://www.oldunreal.com/patch/unrealtournament/linux/ut-install-436-goty.run" \
+               -o ut-install-436-GOTY.run
       - name: Run game-data-packager
         run: |
           mkdir -p output
           
           echo "Building Debian package..."
-          game-data-packager ut99 setup_ut_goty_2.0.0.5.exe --binary-executables --target-format deb --destination ./output
+          game-data-packager ut99 setup_ut_goty_2.0.0.5.exe ut-install-436-GOTY.run --binary-executables --target-format deb --destination ./output
           
           #echo "Building Arch Linux package..."
-          #game-data-packager ut99 setup_ut_goty_2.0.0.5.exe --binary-executables --target-format arch --destination ./output
+          #game-data-packager ut99 setup_ut_goty_2.0.0.5.exe ut-install-436.run ut-install-436-GOTY.run --binary-executables --target-format arch --destination ./output
           
           #echo "Building RPM package..."
-          #game-data-packager ut99 setup_ut_goty_2.0.0.5.exe --binary-executables --target-format rpm --destination ./output
+          #game-data-packager ut99 setup_ut_goty_2.0.0.5.exe ut-install-436.run ut-install-436-GOTY.run --binary-executables --target-format rpm --destination ./output
 
       - name: Upload All Built Packages
         uses: actions/upload-artifact@v4
