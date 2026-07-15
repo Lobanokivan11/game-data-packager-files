@@ -1,0 +1,37 @@
+name: Build Wolfenstein Enemy Territory Data
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-packages:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install System Dependencies
+        run: |
+          sudo apt update
+          sudo apt upgrade -y
+          sudo apt install game-data-packager wget gdebi-core -y
+
+      - name: Download Enemy Territory from Trackbase
+        run: |
+          curl -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)" \
+               -L "http://filebase.trackbase.net/et/full/et260b.x86_full.zip" \
+               -o et260b.x86_full.zip
+
+      - name: Run game-data-packager
+        run: |
+          mkdir -p output
+          game-data-packager enemy-territory --destination ./output
+
+      - name: Upload Built Packages (.deb)
+        uses: actions/artifacts@v4
+        with:
+          name: enemy-territory-debian-packages
+          path: ./output/*.deb
