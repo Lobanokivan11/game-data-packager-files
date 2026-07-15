@@ -16,8 +16,7 @@ jobs:
       - name: Install System Dependencies
         run: |
           sudo apt update
-          sudo apt upgrade -y
-          sudo apt install game-data-packager wget gdebi-core -y
+          sudo apt install game-data-packager-runtime game-data-packager wget gdebi-core -y
 
       - name: Download Enemy Territory from Trackbase
         run: |
@@ -31,7 +30,7 @@ jobs:
           game-data-packager enemy-territory --destination ./output
 
       - name: Upload Built Packages (.deb)
-        uses: actions/artifacts@v4
+        uses: actions/upload-artifact@v4
         with:
           name: enemy-territory-debian-packages
           path: ./output/*.deb
