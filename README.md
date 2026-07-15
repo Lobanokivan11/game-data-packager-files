@@ -8,7 +8,6 @@ Red Hat / Fedora:
 
 ```
 sudo dnf install ./*.rpm
-
 ```
 
 Debian / Ubuntu:
