@@ -24,13 +24,22 @@ jobs:
                -L "http://filebase.trackbase.net/et/full/et260b.x86_full.zip" \
                -o et260b.x86_full.zip
 
-      - name: Run game-data-packager
+      # 4. Generate packages for Arch, Debian, and RPM
+      - name: Run game-data-packager for multiple formats
         run: |
           mkdir -p output
-          game-data-packager enemy-territory --destination ./output
+          
+          echo "Building Debian package..."
+          game-data-packager enemy-territory --target-format deb --destination ./output
+          
+          echo "Building Arch Linux package..."
+          game-data-packager enemy-territory --target-format arch --destination ./output
+          
+          echo "Building RPM package..."
+          game-data-packager enemy-territory --target-format rpm --destination ./output
 
-      - name: Upload Built Packages (.deb)
+      - name: Upload All Built Packages
         uses: actions/upload-artifact@v4
         with:
-          name: enemy-territory-debian-packages
-          path: ./output/*.deb
+          name: enemy-territory-multi-distro-packages
+          path: ./output/*
