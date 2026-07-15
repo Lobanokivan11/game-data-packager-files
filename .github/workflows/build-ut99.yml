@@ -1,0 +1,48 @@
+name: Build UT99 Data
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-packages:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install System Dependencies
+        run: |
+          sudo apt update
+          sudo apt-add-repository multiverse -y
+          sudo dpkg --add-architecture i386
+          sudo apt update
+          sudo apt install game-data-packager-runtime game-data-packager wget gdebi-core -y
+          sudo apt install arj cabextract cdparanoia dynamite gdebi innoextract lame lgc-pg lgogdownloader lhasa pkexec python3-omg python3-pil unar unshield vorbis-tools xdelta xdelta3 xorriso gvfs libvisual-0.4-plugins opus-tools librsvg2-bin -y
+
+      - name: Download Enemy Territory from Trackbase
+        run: |
+          curl -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)" \
+               -L "https://archive.org/download/Unreal-GOG-Collection/Unreal%20Tournament%20GOTY/setup_ut_goty_2.0.0.5.exe" \
+               -o setup_ut_goty_2.0.0.5.exe
+
+      - name: Run game-data-packager
+        run: |
+          mkdir -p output
+          
+          echo "Building Debian package..."
+          game-data-packager ut99 setup_ut_goty_2.0.0.5.exe --binary-executables --target-format deb --destination ./output
+          
+          #echo "Building Arch Linux package..."
+          #game-data-packager ut99 setup_ut_goty_2.0.0.5.exe --binary-executables --target-format arch --destination ./output
+          
+          #echo "Building RPM package..."
+          #game-data-packager ut99 setup_ut_goty_2.0.0.5.exe --binary-executables --target-format rpm --destination ./output
+
+      - name: Upload All Built Packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: ut99-multi-distro-packages
+          path: ./output/*
