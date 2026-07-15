@@ -17,7 +17,12 @@ jobs:
         run: |
           sudo apt update
           sudo apt install game-data-packager-runtime game-data-packager wget gdebi-core -y
+          sudo apt install innoextract lgogdownloader
 
+      - name: Patch game-data-packager Arch Linux Module (fixes error)
+        run: |
+          # Injects 'PackageRelation' into the relative import block of arch.py
+          sudo sed -i 's/from \. import (PackagingSystem/from . import (PackagingSystem, PackageRelation/' /usr/share/games/game-data-packager/game_data_packager/packaging/arch.py
       - name: Download Enemy Territory from Trackbase
         run: |
           curl -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)" \
