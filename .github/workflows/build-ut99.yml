@@ -28,10 +28,10 @@ jobs:
                -L "https://archive.org/download/Unreal-GOG-Collection/Unreal%20Tournament%20GOTY/setup_ut_goty_2.0.0.5.exe" \
                -o setup_ut_goty_2.0.0.5.exe
           curl -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)" \
-               -L "https://www.oldunreal.com/patch/unrealtournament/official/ut-install-436.run" \
+               -L "https://medor.no-ip.org/Entire_Server_Download/ut-install-436.run" \
                -o ut-install-436.run
           curl -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)" \
-               -L "https://www.oldunreal.com/patch/unrealtournament/linux/ut-install-436-goty.run" \
+               -L "https://medor.no-ip.org/Entire_Server_Download/ut-install-436-GOTY.run" \
                -o ut-install-436-goty.run
           curl -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)" \
                -L "https://github.com/OldUnreal/UnrealTournamentPatches/archive/refs/tags/v469d.tar.gz" \
